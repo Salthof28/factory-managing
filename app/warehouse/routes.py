@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
-from app.warehouse import db_warehouse
+from fastapi import APIRouter, Depends
 from .models.createItemModel import CreateItem
 from .models.updateItemModel import UpdateItem
 from app.warehouse.service import WarehouseService

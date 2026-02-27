@@ -1,11 +1,11 @@
 from fastapi import Depends, HTTPException
 from psycopg import AsyncConnection, sql
 from .models.createItemModel import CreateItem
-from app.warehouse import db_warehouse
+from app import db_connect
 
 
 class WarehouseRepository:
-    def __init__(self, db: AsyncConnection = Depends(db_warehouse.con_db)):
+    def __init__(self, db: AsyncConnection = Depends(db_connect.con_db)):
         self.db = db
         
     async def get_items(self):
