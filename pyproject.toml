@@ -1,0 +1,12 @@
+[project]
+name = "fastapi-modular"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.129.0",
+    "psycopg[binary]>=3.3.3",
+    "pwdlib[argon2]>=0.3.0",
+    "pyjwt>=2.11.0",
+]
