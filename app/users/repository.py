@@ -7,7 +7,13 @@ class UsersRepository:
     def __init__(self, db: AsyncConnection = Depends(db_connect.con_db)):
         self.db: AsyncConnection = db
     
-    
+    async def findByEmail(self, email: str):
+        query = "SELECT id, name, email, password, role FROM Users WHERE email = %s"
+        async with self.db.cursor() as cur:
+            await cur.execute(query, (email,))
+            data = await cur.fetchone()
+            return data
+        
     async def findExistingUser(self, dataString: CreateUser):
         # (phone IS NOT NULL AND phone = %s). if phone not null search phone
         # WHEN email = %s THEN 'email', if email equal datastring.email, result matching 'email'
@@ -35,8 +41,6 @@ class UsersRepository:
                 return data["matched_field"]
             return None
             
-        
-    
     async def register(self, newUser: CreateUser):
         async with self.db.cursor() as cur:
             query: str = "INSERT INTO Users (name, email, phone, password, role, img_profile) VALUES (%s, %s, %s, %s, %s, %s) RETURNING *"
