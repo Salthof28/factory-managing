@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from enum import Enum
 
-class EnumRoleUser(BaseModel):
+class EnumRoleUser(str, Enum):
     ADMIN = "ADMIN"
     SUPERVISOR = "SUPERVISOR"
     STAFF = "STAFF"
