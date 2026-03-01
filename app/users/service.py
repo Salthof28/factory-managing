@@ -5,6 +5,7 @@ from .models.login import LoginUser
 from .models.responseUser import ResponseUser
 from pwdlib import PasswordHash
 from dotenv import dotenv_values
+from datetime import datetime, timedelta, timezone
 import jwt
 
 class UserService:
@@ -40,7 +41,7 @@ class UserService:
         password_check = self.hashing_function.verify(password_concat, findUser["password"])
         if not password_check:
             raise HTTPException(status_code=400, detail="password incorrect")
-        
-        encoded = jwt.encode({"id": findUser["id"], "name": findUser["name"], "email": findUser["email"], "role": findUser["role"]}, self.configEnv["key_JWT"], algorithm="HS256")
+        expireToken = datetime.now(timezone.utc) + timedelta(minutes=15)
+        encoded = jwt.encode({"id": findUser["id"], "name": findUser["name"], "email": findUser["email"], "role": findUser["role"], "exp": expireToken}, self.configEnv["key_JWT"], algorithm="HS256")
         # decoded = jwt.decode(encoded, self.configEnv["key_JWT"], algorithms="HS256")
         return encoded
