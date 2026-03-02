@@ -14,6 +14,13 @@ class UsersRepository:
             data = await cur.fetchone()
             return data
         
+    async def findById(self, id: int):
+        query = "SELECT id, name, email, phone, role, img_profile, created_at, updated_at FROM Users WHERE id = %s"
+        async with self.db.cursor() as cur:
+            await cur.execute(query, (id,))
+            data = await cur.fetchone()
+            return data
+        
     async def findExistingUser(self, dataString: CreateUser):
         # (phone IS NOT NULL AND phone = %s). if phone not null search phone
         # WHEN email = %s THEN 'email', if email equal datastring.email, result matching 'email'
