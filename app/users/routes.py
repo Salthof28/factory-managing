@@ -3,7 +3,10 @@ from typing import Annotated
 from .service import UserService
 from .models.createUser import CreateUser
 from .models.login import LoginUser
+from ..globals.guards import AuthGuard
+from ..globals.models import TokenData
 from fastapi.security import OAuth2PasswordBearer
+from dotenv import dotenv_values
 
 users_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -19,6 +22,6 @@ async def login(dataLogin: LoginUser, userService: UserService = Depends(UserSer
     return signIn
 
 @users_router.post("/profile")
-async def getProfile(token: Annotated[str, Depends(oauth2_scheme)] ,userService: UserService = Depends(UserService)):
-    myProfile = await userService.getProfile(token)
+async def getProfile(auth: TokenData = Depends(AuthGuard()), userService: UserService = Depends(UserService)):
+    myProfile = await userService.getProfile(auth)
     return myProfile

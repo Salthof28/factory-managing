@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from .enum import EnumRoleUser
+from ...users.models.enum import EnumRoleUser
 import datetime
 
 class TokenData(BaseModel):

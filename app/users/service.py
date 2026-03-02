@@ -1,15 +1,12 @@
-from fastapi import Depends, HTTPException, status
-from typing import Annotated
+from fastapi import Depends, HTTPException
 from .repository import UsersRepository
 from .models.createUser import CreateUser
 from .models.login import LoginUser
 from .models.responseUser import ResponseUser
-from .models.tokenData import TokenData
+from ..globals.models import TokenData
 from pwdlib import PasswordHash
-from fastapi.security import OAuth2PasswordBearer
 from dotenv import dotenv_values
 from datetime import datetime, timedelta, timezone
-from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 import jwt
 
 
@@ -51,13 +48,6 @@ class UserService:
         # decoded = jwt.decode(encoded, self.configEnv["key_JWT"], algorithms="HS256")
         return encoded
     
-    async def getProfile(self, token: Annotated[str, Depends(OAuth2PasswordBearer(tokenUrl="token"))]):
-        credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validated credentials", headers={"WWW-Authenticate": "Bearer"})
-        try:
-            payload: TokenData = TokenData(**jwt.decode(token, self.configEnv["key_JWT"], algorithms="HS256"))
-            getDataUser: ResponseUser = await self.repository.findById(payload.id)    
-        except ExpiredSignatureError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="token expire")
-        except InvalidTokenError:
-            raise credentials_exception
+    async def getProfile(self, payload: TokenData):
+        getDataUser: ResponseUser = await self.repository.findById(payload.id)    
         return getDataUser
