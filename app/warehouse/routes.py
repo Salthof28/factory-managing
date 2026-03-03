@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 from .models.createItemModel import CreateItem
 from .models.updateItemModel import UpdateItem
 from app.warehouse.service import WarehouseService
+from ..globals.guards import RoleCheck
+from ..globals.models import TokenData
 
 # if you want code like nestjs
 # class WarehouseController:
@@ -22,7 +24,7 @@ async def get_items(warehouseService: WarehouseService = Depends(WarehouseServic
     return data
     
 @warehouse_router.post("/", status_code=201)
-async def add_item(item: CreateItem, warehouseService: WarehouseService = Depends(WarehouseService)):
+async def add_item(item: CreateItem, roleCheck: TokenData = Depends(RoleCheck(["ADMIN", "SUPERVISOR"])), warehouseService: WarehouseService = Depends(WarehouseService)):
     newData = await warehouseService.add_item(item)
     return newData
                
